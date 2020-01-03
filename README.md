@@ -12,6 +12,6 @@ devtools::install_github("xizhou/pubMR")
 
 
 PDF vignettes document:
-[pubMR.pdf](https://github.com/markrobinsonuzh/benchmarkR/tree/master/vignettes/benchmarkR.pdf)
+[pubMR.pdf](https://github.com/xizhou/pubMR/tree/master/vignettes/pubMR.pdf)
 
 [![Build Status](https://travis-ci.org/markrobinsonuzh/benchmarkR.svg?branch=master)](https://travis-ci.org/markrobinsonuzh/benchmarkR)
