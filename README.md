@@ -17,7 +17,17 @@ devtools::install_github("xizhou/pubMR")
 A quick start:
 ```r
 library(pubMR)
-m <- '"neoplasms"[MeSH Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
+m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
 obj <- AB(query=m,output='ABprofile')
 p <- pubtator(obj@PMID)
+```
+Import an xml file downloaded from the PubMed database into R program:
+
+<p align="center">
+  <img src="https://github.com/xizhou/pubMR/blob/master/screenshot.png?raw=true" alt="xml"/>
+</p>
+
+```r
+library(pubMR)
+obj <- AB(input="pubmed_result.xml")
 ```
