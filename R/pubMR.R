@@ -1,14 +1,28 @@
+#' @slot name
+#' @slot host
+#' @slot db
+#' @slot retmax
+#' @slot rettype
+#' @slot retmode
+#' @slot email
+#' @slot tool
+#' @exportClass eutils
 setClass("eutils", 
    representation=list(name="character",host="character",db="character",retmax="character", 
    rettype = "character",retmode="character",email="character",tool="character"), 
    prototype = list(db = "pubmed", retmode = "xml", tool = "reutils"))
+#' @slot term
+#' @exportClass search
 setClass("search",contains="eutils",representation=list(term="character"), 
    prototype=list(host="https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
    name="esearch",rettype ="count",retmax ="100"))
+#' @slot id
+#' @exportClass fetch
 setClass("fetch",contains="eutils",representation=list(id="character"), 
    prototype=list(host = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"))
+#' @export
 setGeneric("Extractor", function(obj,...) standardGeneric("Extractor"))
-
+#' @export
 setMethod("Extractor", "search", function(obj,...)
 {
    if (is.null(obj@term))
@@ -41,7 +55,7 @@ setMethod("Extractor", "search", function(obj,...)
    else y <- XML::xpathSApply(res.xml, "//Id", XML::xmlValue)
    y
 })
-
+#' @export
 setMethod("Extractor","fetch",function(obj,...)
 {
    field <- list(id = paste(obj@id,collapse = ","),db=obj@db,retmax=obj@retmax, 
@@ -64,6 +78,7 @@ setMethod("Extractor","fetch",function(obj,...)
    res.xml
 })
 
+#' @export
 AB <- function(query,input=NULL,output="ABprofile")
 {
    format <- match.arg(output, c("ABprofile", "pmidlist", "xml"))
@@ -98,10 +113,22 @@ AB <- function(query,input=NULL,output="ABprofile")
    y
 }
 
+#' @slot PMID
+#' @slot TI
+#' @slot AB
+#' @slot TA
+#' @slot PDAT
+#' @slot ISSN
+#' @slot MH
+#' @slot SH
+#' @slot MAJR
+#' @slot AU
+#' @slot MS
+#' @exportClass ABprofile
 setClass("ABprofile", representation(PMID="character",TI="character",AB="character", 
    TA="character",PDAT="numeric",ISSN="character", 
    MH="list",SH="list",MAJR="list",AU="list",MS="list"))
-
+#' @export
 setMethod("show", "ABprofile",
 function(object)
 {
@@ -113,14 +140,14 @@ function(object)
         
 })
 
-
+#' @export
 setMethod("[", c("ABprofile", "numeric", "missing"),
     function(x, i, j, drop=TRUE)
 {
    initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],PDAT=x@PDAT[i],
       ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i],MS=x@MS[i])
 })
-
+#' @export
 setMethod("[", c("ABprofile", "character"),
     function(x, i, drop=TRUE)
 {
@@ -128,7 +155,7 @@ setMethod("[", c("ABprofile", "character"),
    initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],PDAT=x@PDAT[i],
       ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i],MS=x@MS[i])
 })
-
+#' @export
 setMethod("$", "ABprofile",
     function(x, name)
 {
@@ -136,6 +163,7 @@ setMethod("$", "ABprofile",
     slot(x, name)
 })
 
+#' @export
 parseAB <- function(doc)
 {
    parse <- function(xmlnodeset, path)
@@ -160,7 +188,7 @@ parseAB <- function(doc)
    YearList <- sapply(YearList, function(x)
    {
       if(x != "NO Result Found")
-         x <- str_sub(x,1, 4)
+         x <- stringr::str_sub(x,1, 4)
       x
    })
    names(YearList) <- NULL
@@ -218,6 +246,7 @@ parseAB <- function(doc)
 
 }
 
+#' @export
 pubtator <- function(pmidlist)
 {
    .Extractor <- function(res.txt)
