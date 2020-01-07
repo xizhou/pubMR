@@ -74,3 +74,6 @@ x <- x[!rowSums(x)==0,]
 x <- x[!colSums(x)==0,] 
 slam::write_stm_CLUTO(x,file="dat.mat")
 ```
+<p align="center">
+  <img src="https://github.com/xizhou/pubMR/blob/master/fig.png?raw=true" alt="gcluto"/>
+</p>
