@@ -4,6 +4,12 @@ pubMR是R平台下一个高效的PubMed文本挖掘工具，集合了：检索�
 
 pubMR is an R package designed for text mining of the PubMed database. Additionally, it provide some highly customized metics to evaluate and visualize results for downstream analysis.
 
+
+## Authors
+
+崔雷 (Cuilei)
+周晓北 (Zhou Xiaobei)
+
 ## Installation
 
 ```r
