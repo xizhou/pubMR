@@ -7,8 +7,9 @@ pubMR is an R package designed for text mining of the PubMed database. Additiona
 
 ## Authors
 
-崔雷 (Cuilei)
-周晓北 (Zhou Xiaobei)
+[崔雷] (Cuilei)
+
+[周晓北] (Zhou Xiaobei)
 
 ## Installation
 
