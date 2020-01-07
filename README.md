@@ -65,3 +65,12 @@ MS                                                A Kinase Anchor Proteins/metab
   Adaptor Proteins, Signal Transducing/genetics                                     0                                             0                                            0
   Adaptor Proteins, Signal Transducing/metabolism                                   0                                             0                                            0
 ```
+The MS-MS co-occurrence-matrix can be transferred as a sparse matrix format file, then be clustered and visualized by gCluto program:
+```r
+library(slam)
+x <- V1
+diag(x) <- 0
+x <- x[!rowSums(x)==0,] 
+x <- x[!colSums(x)==0,] 
+slam::write_stm_CLUTO(x,file="dat.mat")
+```
