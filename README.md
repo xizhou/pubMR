@@ -14,6 +14,7 @@ pubMR is an R package designed for text mining of the PubMed database. Additiona
 ## Installation
 
 ```r
+install.packages("devtools")
 devtools::install_github("xizhou/pubMR")
 ```
 
