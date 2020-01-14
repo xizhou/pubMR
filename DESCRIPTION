@@ -12,5 +12,7 @@ Imports:
     httr,
     RCurl,
     stringr,
-    XML
+    XML,
+    slam,
+    tidyr
 RoxygenNote: 7.0.2

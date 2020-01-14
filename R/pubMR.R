@@ -286,7 +286,7 @@ pubtator <- function(pmidlist)
           paste0("https://www.ncbi.nlm.nih.gov/research/pubtator-api/publications/export/biocxml?pmids=", 
           paste(pmidlist, collapse = ",")), .opts = opts)
       res.txt <- as.character(tg$value())
-      res.txt <- unlist(str_split(res.txt,"<document>"))
+      res.txt <- unlist(stringr::str_split(res.txt,"<document>"))
       res.txt <- paste0("<document>",res.txt[-1])
       res.txt[length(res.txt)] <- stringr::str_replace(res.txt[length(res.txt)],"</collection>", "")   
       annota.list <- lapply(res.txt,.Extractor)
