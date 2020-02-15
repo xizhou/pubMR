@@ -12,10 +12,18 @@ pubMR is an R package designed for text mining of the PubMed database. Additiona
 [周晓北] (Zhou Xiaobei)
 
 ## Installation
+### for Linux and Mac:
 
 ```r
 install.packages("devtools")
 devtools::install_github("xizhou/pubMR")
+```
+
+### for WIN10 user:
+
+```r
+##install.packages("stringi",type="win.binary")##
+devtools::install_github("xizhou/pubMR",upgrade="never",force=TRUE)
 ```
 
 ## Vignettes
