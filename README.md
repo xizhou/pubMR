@@ -19,7 +19,7 @@ install.packages("devtools")
 devtools::install_github("xizhou/pubMR")
 ```
 
-### for WIN10 user:
+### for WIN user:
 
 ```r
 install.packages("devtools")
