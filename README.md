@@ -22,7 +22,9 @@ devtools::install_github("xizhou/pubMR")
 ### for WIN10 user:
 
 ```r
-##install.packages("stringi",type="win.binary")##
+install.packages("devtools")
+install.packages("RCurl", type="win.binary")
+install.packages("stringi",type="win.binary")
 devtools::install_github("xizhou/pubMR",upgrade="never",force=TRUE)
 ```
 
