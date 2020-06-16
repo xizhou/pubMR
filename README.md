@@ -104,7 +104,6 @@ The MS-MS co-occurrence-matrix can be transferred as a sparse matrix format file
 ```r
 library(slam)
 x <- V1
-diag(x) <- 0
 x <- x[!rowSums(x)==0,] 
 x <- x[!colSums(x)==0,] 
 slam::write_stm_CLUTO(x,file="dat.mat")
