@@ -79,57 +79,68 @@ setMethod("Extractor","fetch",function(obj,...)
 })
 
 #' @export
-AB <- function(query,input=NULL,output="ABprofile")
+txtList <- function(input,inputType="query",outputType="txtList")
 {
-   format <- match.arg(output, c("ABprofile", "pmidlist", "xml"))
-   if(is.null(input))
+   outputType <- match.arg(outputType, c("txtList", "pmidList", "xml"))
+   inputType <- match.arg(inputType, c("query", "pmidList", "xml","PubMed"))
+   if(inputType=="query")
    {
-      s <- new("search", term = query)
-      #cat("we only extract English articles\n")
+      s <- new("search", term=input)
       s@retmax <- Extractor(s)
       s@rettype<- "uilist"
-      pmidlist <- Extractor(s)
-      if(format == "pmidlist"){
-         return(pmidlist)
-      }else{
-      f <- new("fetch", id = pmidlist, retmax = as.character(length(pmidlist)))
-      y <- Extractor(f)
-   }}
-   else if(length(grep(".xml",input))>0)
+      pmidList <- Extractor(s)
+      if(outputType=="pmidList")
+      {
+         y <- pmidList
+      }
+      else 
+      {
+         f <- new("fetch",id=pmidList,retmax=as.character(length(pmidList)))
+         y <- Extractor(f)
+         if(outputType=="txtList")
+            y <- .txtList(y)
+      }
+   }
+   else if(inputType=="PubMed")
+   {
+      y <- readPB(input)
+      y <- cLToS4(y,"txtList")
+   }
+   else if(inputType=="pmidList")
+   {
+      pmidList <- input
+      f <- new("fetch", id=pmidList,retmax=as.character(length(pmidList)))
+      y <- Extractor(f) 
+      if(outputType=="txtList")
+         y <- .txtList(y)     
+   } 
+   
+   else if(inputType=="xml")
    {
       #inpout must be XML file
-      y <- input
-      y <- XML::xmlTreeParse(y,useInternalNodes = T, encoding = "UTF-8")
+      y <- XML::xmlTreeParse(input,useInternalNodes=T,encoding="UTF-8")
+      if(outputType=="txtList")
+         y <- .txtList(y)
    }
-   else
-   {
-      pmidlist <- input
-      f <- new("fetch", id=pmidlist,retmax = as.character(length(pmidlist)))
-      y <- Extractor(f)
-      
-   }
-   if(format == "ABprofile")
-        y <- parseAB(y)
    y
 }
 
 #' @slot PMID
 #' @slot TI
 #' @slot AB
-#' @slot TA
-#' @slot PDAT
+#' @slot JT
+#' @slot DP
 #' @slot ISSN
 #' @slot MH
 #' @slot SH
 #' @slot MAJR
 #' @slot AU
-#' @slot MS
-#' @exportClass ABprofile
-setClass("ABprofile", representation(PMID="character",TI="character",AB="character", 
-   TA="character",PDAT="numeric",ISSN="character", 
-   MH="list",SH="list",MAJR="list",AU="list",MS="list"))
+#' @exportClass txt
+setClass("txtList", representation(PMID="character",TI="character",AB="character", 
+   JT="character",DP="character",ISSN="character", 
+   MH="list",SH="list",MAJR="list",AU="list"))
 #' @export
-setMethod("show", "ABprofile",
+setMethod("show", "txtList",
 function(object)
 {
    cat("An object of class \"",class(object),"\"",
@@ -141,22 +152,22 @@ function(object)
 })
 
 #' @export
-setMethod("[", c("ABprofile", "numeric", "missing"),
+setMethod("[", c("txtList", "numeric", "missing"),
     function(x, i, j, drop=TRUE)
 {
-   initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],PDAT=x@PDAT[i],
-      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i],MS=x@MS[i])
+   initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],DP=x@DP[i],JT=x@JT[i],
+      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i])
 })
 #' @export
-setMethod("[", c("ABprofile", "character"),
+setMethod("[", c("txtList", "character"),
     function(x, i, drop=TRUE)
 {
    i <- which(x@PMID %in% i)
-   initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],PDAT=x@PDAT[i],
-      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i],MS=x@MS[i])
+   initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],DP=x@DP[i],JT=x@JT[i],
+      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i])
 })
 #' @export
-setMethod("$", "ABprofile",
+setMethod("$", "txtList",
     function(x, name)
 {
     ## 'name' is a character(1)
@@ -164,7 +175,7 @@ setMethod("$", "ABprofile",
 })
 
 #' @export
-parseAB <- function(doc)
+.txtList <- function(doc)
 {
    parse <- function(xmlnodeset, path)
    {    
@@ -182,7 +193,7 @@ parseAB <- function(doc)
    TitleList <- parse(ArticleList, ".//ArticleTitle")
    AbstractList <- sapply(parse(ArticleList,".//AbstractText"), 
       function(x) paste0(x,collapse=" "))
-   JournalList <- parse(ArticleList, ".//ISOAbbreviation")
+   JournalList <- parse(ArticleList, ".//Title")
    ISSN <- parse(ArticleList, ".//MedlineJournalInfo/ISSNLinking")
    YearList <- parse(ArticleList, ".//PubDate")
    YearList <- sapply(YearList, function(x)
@@ -194,16 +205,16 @@ parseAB <- function(doc)
    names(YearList) <- NULL
    MeshList <- parse(ArticleList, ".//MeshHeading//DescriptorName")
    SubmeshList <- sapply(parse(ArticleList, ".//QualifierName"), unique)
-   MajrList <- sapply(ArticleList, function(x)
-   {
-       tmp <- XML::getNodeSet(x, 
-          ".//DescriptorName[@MajorTopicYN='Y'] | .//QualifierName[@MajorTopicYN='Y']")
-       if(length(tmp) == 0)
-          y <- "NO Result Found"
-       else y <- sapply(unique(sapply(tmp, XML::xmlParent)), 
-          function(x) XML::xpathSApply(x, ".//DescriptorName", XML::xmlValue))
-       y
-   })
+   #MajrList <- sapply(ArticleList, function(x)
+   #{
+   #    tmp <- XML::getNodeSet(x, 
+   #       ".//DescriptorName[@MajorTopicYN='Y'] | .//QualifierName[@MajorTopicYN='Y']")
+   #    if(length(tmp) == 0)
+   #       y <- "NO Result Found"
+   #    else y <- sapply(unique(sapply(tmp, XML::xmlParent)), 
+   #       function(x) XML::xpathSApply(x, ".//DescriptorName", XML::xmlValue))
+   #    y
+   #})
    AuthorList <- parse(ArticleList, 
       ".//AuthorList/Author/LastName | .//AuthorList/Author/ForeName")
    AuthorList <- sapply(AuthorList,function(x)
@@ -212,7 +223,7 @@ parseAB <- function(doc)
            x <- paste(x[(1:length(x)) %% 2 == 1], x[(1:length(x)) %% 2 == 0], sep = " ")
       x
    })
-   MS <- sapply(ArticleList, function(x)
+   MAJR <- sapply(ArticleList, function(x)
    {
        tmp1 <- XML::getNodeSet(x, ".//DescriptorName[@MajorTopicYN='Y']")
        tmp2 <- XML::getNodeSet(x, ".//QualifierName[@MajorTopicYN='Y']")
@@ -240,11 +251,100 @@ parseAB <- function(doc)
         y <- c(y,paste(y1,y2,sep="/"))
      }
      y})                                   
-    profile <- new("ABprofile", PMID = PmidList, TI = TitleList, AB = AbstractList, PDAT = as.numeric(YearList),
-                   TA = JournalList, ISSN = ISSN, MH = MeshList, MAJR = MajrList, SH = SubmeshList, 
-                   AU = AuthorList, MS=MS)
-
+    new("txtList",PMID=PmidList,TI=TitleList,AB=AbstractList,
+                   DP=YearList,JT=JournalList,ISSN=ISSN,MH=MeshList,
+                   MAJR=MAJR,SH=SubmeshList,AU=AuthorList)
 }
+
+readPB <- function(x)
+{ 
+   require(data.table)
+   f <- readLines(x)
+   f <- as.data.table(f)
+   names(f) <- "V1"
+   f <- split(f,cumsum(f==""))
+   f <- lapply(f,function(x) x[,paste(V1,collapse=""), cumsum(!grepl("      ",V1))])
+   f <- lapply(f,function(x) x[,gsub("       "," ",V1)])
+   y <- list()
+   for(i in seq(f))
+   {
+      x <- f[[i]]
+      id <- grep("FAU - ",x)
+      AU <- gsub("FAU - ","",x[id])
+      id <- grep("JT  - ",x)
+      JT <- gsub("JT  - ","",x[id])
+      id <- grep("PMID- ",x)
+      PMID <- gsub("PMID- ","",x[id])
+      id <- grep("MH  - ",x)
+      mesh <- gsub("MH  - ","",x[id])
+      SH <- strsplit(mesh,"/")
+      SH <- lapply(SH,function(x) x[-1L])
+      SH <- SH[sapply(SH,length)>0]
+      SH <- unique(gsub("\\*","",unlist(SH)))
+      MH <- strsplit(mesh,"/")
+      MH <- lapply(MH,function(x) x[1L])
+      MH <- unique(unlist(MH))
+      MAJR <- mesh[grep("\\*",mesh)]
+      MAJR <- strsplit(MAJR,"/")
+      MAJR <- lapply(MAJR,function(x) 
+                        {id <- grep("\\*",x)
+                        if(any(id%in%1))
+                        {
+                            if(length(id)==1)
+                               y <- x[1]
+                            else
+                               y <- paste(x[1],x[-1L],sep="/")
+                        }
+                        else y <- paste(x[1],x[id],sep="/")
+                        y})
+      MAJR <- unlist(MAJR)
+      MAJR <- gsub("\\*","",MAJR)
+      id <- grep("AB  - ",x)
+      AB <- gsub("AB  - ","",x[id])
+      id <- grep("TI  - ",x)
+      TI <- gsub("TI  - ","",x[id])
+      id <- grep("DP  - ",x)
+      DP <- gsub("DP  - ","",x[id])
+      DP <- gsub(" .*","",DP)
+      id <- grepl("IS  - ",x,fixed=TRUE)&grepl(" (Linking)",x,fixed=TRUE)
+      IS <- gsub("IS  - ","",x[id])
+      ISSN <- gsub(" (Linking)","",IS,fixed=TRUE)
+      tmp <- list(AU=AU,JT=JT,PMID=PMID,SH=SH,MH=MH,
+         MAJR=MAJR,TI=TI,AB=AB,DP=DP,ISSN=ISSN)
+      tmp[sapply(tmp,length)==0] <- NA
+      y[[i]] <- tmp
+   }
+   z <- c("AU","JT","PMID","SH","MH","MAJR","TI","AB","DP","ISSN")
+   names(z) <- z
+   lapply(z,function(x) sapply(y,"[[",x))
+}
+
+
+cLToS4 <- function (list, class) 
+{
+##originally import from "spectralAnalysis" pkg
+   S4Object <- new(class)
+   slotNames <- slotNames(S4Object)
+   listNames <- names(list)
+   checkNames <- all(listNames %in% slotNames)
+   checkEqualNameLength <- length(listNames) == length(slotNames)
+   if (!checkNames)
+   {
+      stop("names of 'list' do not match 'class'")
+   }
+   if (!checkEqualNameLength)
+   {
+      warning("some elements will be lost by conversion to S4 object")
+   }
+   for (slot in slotNames)
+   {
+      slot(S4Object, slot, check = FALSE) <- list[[slot]]
+   }
+   isValidObject <- validObject(S4Object)
+   return(S4Object)
+}
+
+
 
 #' @export
 pubtator <- function(pmidlist)
