@@ -28,9 +28,11 @@ install.packages("stringi",type="win.binary")
 devtools::install_github("xizhou/pubMR",upgrade="never",force=TRUE)
 ```
 
-\ ## Vignettes
-\ [pubMR.pdf](https://github.com/xizhou/pubMR/tree/master/vignettes/pubMR.pdf)
-
+<!-- 
+## Vignettes
+pubMR.pdf](https://github.com/xizhou/pubMR/tree/master/vignettes/pubMR.pdf)
+ -->
+ 
 ## Usage
 A quick start:
 ```r
