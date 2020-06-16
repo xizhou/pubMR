@@ -44,7 +44,7 @@ p <- pubtator(obj@PMID)
 Import an "PubMed/xml" file downloaded from the PubMed database into R program:
 
 <p align="center">
-  <img src="https://github.com/xizhou/pubMR/blob/master/screenshot.png?raw=true" alt="xml"/>
+  <img src="https://github.com/xizhou/pubMR/blob/master/screenshot.png?raw=true" alt="PubMed"/>
 </p>
 
 ```r
