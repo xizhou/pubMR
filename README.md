@@ -28,18 +28,18 @@ install.packages("stringi",type="win.binary")
 devtools::install_github("xizhou/pubMR",upgrade="never",force=TRUE)
 ```
 
-## Vignettes
-[pubMR.pdf](https://github.com/xizhou/pubMR/tree/master/vignettes/pubMR.pdf)
+\ ## Vignettes
+\ [pubMR.pdf](https://github.com/xizhou/pubMR/tree/master/vignettes/pubMR.pdf)
 
 ## Usage
 A quick start:
 ```r
 library(pubMR)
 m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
-obj <- AB(query=m,output='ABprofile')
+obj <- txtList(input=m)
 p <- pubtator(obj@PMID)
 ```
-Import an xml file downloaded from the PubMed database into R program:
+Import an "PubMed/xml" file downloaded from the PubMed database into R program:
 
 <p align="center">
   <img src="https://github.com/xizhou/pubMR/blob/master/screenshot.png?raw=true" alt="xml"/>
@@ -47,13 +47,23 @@ Import an xml file downloaded from the PubMed database into R program:
 
 ```r
 library(pubMR)
-obj <- AB(input="pubmed_result.xml")
+obj <- txtList(input="pubmed-neoplasmsM-set.txt",inputType="PubMed")
 ```
+
+```r
+library(pubMR)
+obj <- txtList(input="pubmed_result.xml",inputType="xml")
+```
+
+
+
 
 Save as an xml file:
 ```r
+library(pubMR)
 library(XML)
-obj1 <- AB(query=m,output='xml')
+m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
+obj1 <- txtList(input=m,outputType='xml')
 saveXML(obj1,file="result.xml")
 ```
 
