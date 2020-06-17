@@ -41,6 +41,7 @@ m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/
 obj <- txtList(input=m)
 ```
 ### Advanced operations:
+Load/save files: 
 - Import an "PubMed" file downloaded from the PubMed database into R program:
 
 <p align="center">
@@ -51,13 +52,13 @@ obj <- txtList(input=m)
 library(pubMR)
 obj <- txtList(input="pubmed-neoplasmsM-set.txt",inputType="PubMed")
 ```
-Also import old "xml" file:
+- import old "xml" file:
 ```r
 library(pubMR)
 obj <- txtList(input="pubmed_result.xml",inputType="xml")
 ```
 
-Save as an xml file:
+- Save as an xml file:
 ```r
 library(pubMR)
 library(XML)
