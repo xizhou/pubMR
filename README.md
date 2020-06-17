@@ -40,6 +40,14 @@ library(pubMR)
 m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
 obj <- txtList(input=m)
 ```
+
+```text
+obj
+
+An object of class "txtList" containing 95 articles
+with slot names: PMID,TI,AB,JT,DP,ISSN,MH,SH,MAJR,AU.
+```
+
 ### Advanced operations:
 **Load/save files:** 
 - Import a "PubMed" file downloaded from the PubMed database into R program:
