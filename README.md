@@ -48,10 +48,19 @@ obj
 An object of class "txtList" containing 95 articles
 with slot names: PMID,TI,AB,JT,DP,ISSN,MH,SH,MAJR,AU.
 ```
-![#1589F0](https://placehold.it/15/1589F0/000000?text=+) All text information are storing in format of **txtList**. **txtList** includes PMID, TI(title), AB(abstract), JT(journal title), DP(date publish), ISSN,
+All text information are storing in format of **txtList**. **txtList** includes PMID, TI(title), AB(abstract), JT(journal title), DP(date publish), ISSN,
 MH(MeSH heading), SH(MeSH subheading), MAJR(major topic, asterisks on MeSH headings and subheadings) and AU(author).
 
+```diff
 
+
++ this will be highlighted in green
+
+
+- this will be highlighted in red
+
+
+```
 
 Any information (e.g., PMID) an be extracted like:
 ```text
