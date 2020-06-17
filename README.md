@@ -51,7 +51,9 @@ with slot names: PMID,TI,AB,JT,DP,ISSN,MH,SH,MAJR,AU.
 All text information are storing in format of **txtList**. **txtList** includes PMID, TI(title), AB(abstract), JT(journal title), DP(date publish), ISSN,
 MH(MeSH heading), SH(MeSH subheading), MAJR(major topic, asterisks on MeSH headings and subheadings) and AU(author).
 
-<span style="color:orange;">Word up</span>
+<p style='color:red'>This is some red text.</p>
+<font color="red">This is some text!</font>
+These are <b style='color:red'>red words</b>.
 
 Any information (e.g., PMID) an be extracted like:
 ```text
