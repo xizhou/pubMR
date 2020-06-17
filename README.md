@@ -43,11 +43,11 @@ obj <- txtList(input=m)
 
 ```text
 obj
-
 An object of class "txtList" containing 95 articles
 with slot names: PMID,TI,AB,JT,DP,ISSN,MH,SH,MAJR,AU.
 ```
-
+All text information are storing in format of "txtList". "txtList" includes PMID, TI(title), AB(abstract), JT(journal title), DP(date publish), ISSN,
+MH(MeSH heading), SH(MeSH subheading), MAJR(major topic, asterisks on MeSH headings and subheadings) and AU(author). 
 ### Advanced operations:
 **Load/save files:** 
 - Import a "PubMed" file downloaded from the PubMed database into R program:
