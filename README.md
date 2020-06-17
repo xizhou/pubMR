@@ -41,7 +41,7 @@ m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/
 obj <- txtList(input=m)
 ```
 ### Advanced operations:
-Import an "PubMed" file downloaded from the PubMed database into R program:
+- Import an "PubMed" file downloaded from the PubMed database into R program:
 
 <p align="center">
   <img src="https://github.com/xizhou/pubMR/blob/master/screenshot.png?raw=true" alt="PubMed"/>
