@@ -147,3 +147,25 @@ slam::write_stm_CLUTO(x,file="dat.mat")
 <p align="center">
   <img src="https://github.com/xizhou/pubMR/blob/master/fig.png?raw=true" alt="gcluto"/>
 </p>
+
+```R
+meshtree <- "https://github.com/xizhou/pubMR/raw/master/meshtree2019.Rdata"
+load(url(meshtree))
+```
+```R
+m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
+obj <- txtList(input=m)
+obj1=data.table(PMID=obj@PMID,MAJR=obj@MAJR)
+MAJR <- obj1[,MAJR]
+idx <- sapply(MAJR,is.null)
+obj1 <- obj1[!idx,]
+obj1 = obj1 %>% unnest(MAJR) 
+V <- table(obj1[,c("MAJR","PMID")])
+V1 <- crossprod(t(V))
+```
+```R
+idr <- which(rownames(V) %in% meshtree[class=="D",mesh])
+idc <- which(rownames(V) %in% meshtree[class=="C",mesh])
+V1 <- V[idr,idc]
+V1[1:2,1:2]
+```
