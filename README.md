@@ -34,14 +34,14 @@ pubMR.pdf](https://github.com/xizhou/pubMR/tree/master/vignettes/pubMR.pdf)
  -->
  
 ## Usage
-A quick start:
+### A quick start:
 ```r
 library(pubMR)
 m <- '"neoplasms"[MeSH Terms] AND "serine/metabolism"[Mesh Terms] AND ("2017/01/01"[PDAT] : "2018/12/31"[PDAT])'
 obj <- txtList(input=m)
-p <- pubtator(obj@PMID)
 ```
-Import an "PubMed/xml" file downloaded from the PubMed database into R program:
+### Advanced operations:
+Import an "PubMed" file downloaded from the PubMed database into R program:
 
 <p align="center">
   <img src="https://github.com/xizhou/pubMR/blob/master/screenshot.png?raw=true" alt="PubMed"/>
@@ -51,14 +51,11 @@ Import an "PubMed/xml" file downloaded from the PubMed database into R program:
 library(pubMR)
 obj <- txtList(input="pubmed-neoplasmsM-set.txt",inputType="PubMed")
 ```
-
+Also import old "xml" file:
 ```r
 library(pubMR)
 obj <- txtList(input="pubmed_result.xml",inputType="xml")
 ```
-
-
-
 
 Save as an xml file:
 ```r
