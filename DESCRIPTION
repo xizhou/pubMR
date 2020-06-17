@@ -1,10 +1,10 @@
 Package: pubMR
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Text Mining Tool for PubMed database in R
+Version: 0.0.0.2
+Author: Xiaobei Zhou and Lei Cui
+Description: pubMR is an R package designed for text mining of the PubMed database. Additionally, it provide some highly customized metics to evaluate and visualize results for downstream analysis.
 Depends: R (>= 3.5.1)
-License: What license is it under?
+License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
 Imports: 
