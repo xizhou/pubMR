@@ -159,6 +159,25 @@ idr <- which(nms %in% meshtree[class=="D",mesh])
 idc <- which(nms %in% meshtree[class=="C",mesh])
 V2 <- V1[idr,idc]
 ```
+**Call PubTator:**
+```R
+p <- pubtator(obj@PMID)
+```
+```text
+p
+          pmid     type           name           id
+   1: 27297361     Gene         mTORC1       382056
+   2: 27297361 Chemical         serine MESH:C047902
+   3: 27297361 Chemical        glycine MESH:D005998
+   4: 27297361  Disease   osteosarcoma MESH:D012516
+   5: 27297361  Disease   Osteosarcoma MESH:D012516
+  ---                                              
+2836: 30579699  Disease bladder cancer MESH:D001749
+2837: 30579699     Gene             TF         2152
+2838: 30579699 Chemical            Ser MESH:C530429
+2839: 30579699     Gene             TF         2152
+2840: 30579699  Disease bladder cancer MESH:D001749
+```
 **Combine with other tools:**
 - The co-occurrence-matrix can be put into "gCluto" program:
 ```r
