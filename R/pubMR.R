@@ -193,7 +193,7 @@ setMethod("$", "txtList",
    TitleList <- parse(ArticleList, ".//ArticleTitle")
    AbstractList <- sapply(parse(ArticleList,".//AbstractText"), 
       function(x) paste0(x,collapse=" "))
-   JournalList <- parse(ArticleList, ".//Title")
+   JournalList <- parse(ArticleList, ".//Journal/Title")
    ISSN <- parse(ArticleList, ".//MedlineJournalInfo/ISSNLinking")
    YearList <- parse(ArticleList, ".//PubDate")
    YearList <- sapply(YearList, function(x)
