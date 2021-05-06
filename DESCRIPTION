@@ -2,6 +2,7 @@ Package: pubMR
 Title: Text Mining Tool for PubMed database in R
 Version: 0.0.0.2
 Author: Xiaobei Zhou and Lei Cui
+Maintainer: Xiaobei Zhou <joe_xiaobei@hotmail.com>
 Description: pubMR is an R package designed for text mining of the PubMed database. Additionally, it provide some highly customized metics to evaluate and visualize results for downstream analysis.
 Depends: R (>= 3.5.1)
 License: GPL (>=2)
@@ -13,6 +14,5 @@ Imports:
     RCurl,
     stringr,
     XML,
-    slam,
-    tidyr
-RoxygenNote: 7.0.2
+    tidyr,
+    methods

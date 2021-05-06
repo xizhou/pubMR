@@ -1,28 +1,13 @@
-#' @slot name
-#' @slot host
-#' @slot db
-#' @slot retmax
-#' @slot rettype
-#' @slot retmode
-#' @slot email
-#' @slot tool
-#' @exportClass eutils
 setClass("eutils", 
    representation=list(name="character",host="character",db="character",retmax="character", 
    rettype = "character",retmode="character",email="character",tool="character"), 
    prototype = list(db = "pubmed", retmode = "xml", tool = "reutils"))
-#' @slot term
-#' @exportClass search
 setClass("search",contains="eutils",representation=list(term="character"), 
    prototype=list(host="https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
    name="esearch",rettype ="count",retmax ="100"))
-#' @slot id
-#' @exportClass fetch
 setClass("fetch",contains="eutils",representation=list(id="character"), 
    prototype=list(host = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"))
-#' @export
 setGeneric("Extractor", function(obj,...) standardGeneric("Extractor"))
-#' @export
 setMethod("Extractor", "search", function(obj,...)
 {
    if (is.null(obj@term))
@@ -55,7 +40,6 @@ setMethod("Extractor", "search", function(obj,...)
    else y <- XML::xpathSApply(res.xml, "//Id", XML::xmlValue)
    y
 })
-#' @export
 setMethod("Extractor","fetch",function(obj,...)
 {
    field <- list(id = paste(obj@id,collapse = ","),db=obj@db,retmax=obj@retmax, 
@@ -78,7 +62,7 @@ setMethod("Extractor","fetch",function(obj,...)
    res.xml
 })
 
-#' @export
+
 txtList <- function(input,inputType="query",outputType="txtList")
 {
    outputType <- match.arg(outputType, c("txtList", "pmidList", "xml"))
@@ -125,21 +109,9 @@ txtList <- function(input,inputType="query",outputType="txtList")
    y
 }
 
-#' @slot PMID
-#' @slot TI
-#' @slot AB
-#' @slot JT
-#' @slot DP
-#' @slot ISSN
-#' @slot MH
-#' @slot SH
-#' @slot MAJR
-#' @slot AU
-#' @exportClass txt
 setClass("txtList", representation(PMID="character",TI="character",AB="character", 
    JT="character",DP="character",ISSN="character", 
-   MH="list",SH="list",MAJR="list",AU="list"))
-#' @export
+   MH="list",SH="list",MAJR="list",AU="list",RN="list",AF="list"))
 setMethod("show", "txtList",
 function(object)
 {
@@ -151,22 +123,19 @@ function(object)
         
 })
 
-#' @export
 setMethod("[", c("txtList", "numeric", "missing"),
     function(x, i, j, drop=TRUE)
 {
    initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],DP=x@DP[i],JT=x@JT[i],
-      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i])
+      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i],RN=x@RN[i],AF=x@AF[i])
 })
-#' @export
 setMethod("[", c("txtList", "character"),
     function(x, i, drop=TRUE)
 {
    i <- which(x@PMID %in% i)
    initialize(x,PMID=x@PMID[i],TI=x@TI[i],AB=x@AB[i],DP=x@DP[i],JT=x@JT[i],
-      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i])
+      ISSN=x@ISSN[i],MH=x@MH[i],SH=x@SH[i],MAJR=x@MAJR[i],AU=x@AU[i],AF=x@AF[i])
 })
-#' @export
 setMethod("$", "txtList",
     function(x, name)
 {
@@ -174,7 +143,6 @@ setMethod("$", "txtList",
     slot(x, name)
 })
 
-#' @export
 .txtList <- function(doc)
 {
    parse <- function(xmlnodeset, path)
@@ -195,6 +163,8 @@ setMethod("$", "txtList",
       function(x) paste0(x,collapse=" "))
    JournalList <- parse(ArticleList, ".//Journal/Title")
    ISSN <- parse(ArticleList, ".//MedlineJournalInfo/ISSNLinking")
+   RN <- parse(ArticleList, ".//ChemicalList/Chemical/NameOfSubstance")
+   AF <- parse(ArticleList, ".//AuthorList/Author/AffiliationInfo/Affiliation")
    YearList <- parse(ArticleList, ".//PubDate")
    YearList <- sapply(YearList, function(x)
    {
@@ -250,18 +220,20 @@ setMethod("$", "txtList",
         y2 <- sapply(tmp2, XML::xmlValue)
         y <- c(y,paste(y1,y2,sep="/"))
      }
-     y})                                   
+     y})  
+                                  
     new("txtList",PMID=PmidList,TI=TitleList,AB=AbstractList,
                    DP=YearList,JT=JournalList,ISSN=ISSN,MH=MeshList,
-                   MAJR=MAJR,SH=SubmeshList,AU=AuthorList)
+                   MAJR=MAJR,SH=SubmeshList,AU=AuthorList,RN=RN,AF=AF)
 }
 
 readPB <- function(x)
 { 
-   require(data.table)
+   #requireNamespace(data.table)
    f <- readLines(x)
-   f <- as.data.table(f)
+   f <- data.table::as.data.table(f)
    names(f) <- "V1"
+   V1 <- NULL
    f <- split(f,cumsum(f==""))
    f <- lapply(f,function(x) x[,paste(V1,collapse=""), cumsum(!grepl("      ",V1))])
    f <- lapply(f,function(x) x[,gsub("       "," ",V1)])
@@ -271,6 +243,8 @@ readPB <- function(x)
       x <- f[[i]]
       id <- grep("FAU - ",x)
       AU <- gsub("FAU - ","",x[id])
+      id <- grep("AD  - ",x)
+      AF <- gsub("AD  - ","",x[id])
       id <- grep("JT  - ",x)
       JT <- gsub("JT  - ","",x[id])
       id <- grep("PMID- ",x)
@@ -299,6 +273,12 @@ readPB <- function(x)
                         y})
       MAJR <- unlist(MAJR)
       MAJR <- gsub("\\*","",MAJR)
+      
+      id <- grep("RN  - ",x)
+      RN <- gsub("RN  - ","",x[id])
+      RN <- gsub(".* \\(","",RN)
+      RN <- gsub("\\)","",RN)
+      
       id <- grep("AB  - ",x)
       AB <- gsub("AB  - ","",x[id])
       id <- grep("TI  - ",x)
@@ -309,12 +289,12 @@ readPB <- function(x)
       id <- grepl("IS  - ",x,fixed=TRUE)&grepl(" (Linking)",x,fixed=TRUE)
       IS <- gsub("IS  - ","",x[id])
       ISSN <- gsub(" (Linking)","",IS,fixed=TRUE)
-      tmp <- list(AU=AU,JT=JT,PMID=PMID,SH=SH,MH=MH,
-         MAJR=MAJR,TI=TI,AB=AB,DP=DP,ISSN=ISSN)
+      tmp <- list(AU=AU,AF=AF,JT=JT,PMID=PMID,SH=SH,MH=MH,
+         MAJR=MAJR,TI=TI,AB=AB,DP=DP,ISSN=ISSN,RN=RN)
       tmp[sapply(tmp,length)==0] <- NA
       y[[i]] <- tmp
    }
-   z <- c("AU","JT","PMID","SH","MH","MAJR","TI","AB","DP","ISSN")
+   z <- c("AU","AF","JT","PMID","SH","MH","MAJR","TI","AB","DP","ISSN","RN")
    names(z) <- z
    lapply(z,function(x) sapply(y,"[[",x))
 }
@@ -345,8 +325,6 @@ cLToS4 <- function (list, class)
 }
 
 
-
-#' @export
 pubtator <- function(pmidlist)
 {
    .Extractor <- function(res.txt)
@@ -354,7 +332,7 @@ pubtator <- function(pmidlist)
        x <- try(XML::xmlTreeParse(res.txt,asText=TRUE,useInternalNodes=T),silent=TRUE)
        if(class(x)[1L]=="try-error")
           y <- NA
-       else if(length(XML:::getNodeSet(x, "//annotation")) == 0)
+       else if(length(XML::getNodeSet(x, "//annotation")) == 0)
           y <- NA
        else
        {
@@ -390,7 +368,7 @@ pubtator <- function(pmidlist)
       res.txt <- paste0("<document>",res.txt[-1])
       res.txt[length(res.txt)] <- stringr::str_replace(res.txt[length(res.txt)],"</collection>", "")   
       annota.list <- lapply(res.txt,.Extractor)
-      Sys.sleep(0.01)
+      Sys.sleep(2)
       return(annota.list)
    } 
    if(length(pmidlist) <= 100)
